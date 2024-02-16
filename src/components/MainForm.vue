@@ -4,6 +4,7 @@
       <v-text-field
         label="Offer Code"
         v-model="getOffer"
+        :error-messages="codeError"
         required
       ></v-text-field>
       <v-btn @click="submitOfferForm">Submit Offer Code</v-btn>
@@ -14,7 +15,19 @@
           <span class="headline">{{ offerDetails.name }}</span>
         </v-card-title>
         <v-card-text>
-          <p>Price: {{ offerDetails.price }}</p>
+          <ul>
+            <li v-for="(item, index) in offerDetails.items" :key="index">
+              <p>{{ item.name }}</p>
+              <p>
+                De:
+                <span class="text-decoration-line-through"
+                  >R$ {{ item.oldPrice }},00</span
+                >
+              </p>
+              <p>Por: R$ {{ item.newPrice }},00</p>
+              <V-img :width="300" :src="item.image" alt="Item image" />
+            </li>
+          </ul>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -32,7 +45,7 @@
 <script>
 import UserForm from "./UserForm.vue";
 import AddressForm from "./AddressForm.vue";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { offers } from "../mocks/handlers";
 
 export default {
@@ -44,21 +57,31 @@ export default {
   data() {},
   setup() {
     const getOffer = ref("");
+    const codeError = ref("");
     const showOfferModal = ref(false);
     const offerDetails = ref(null);
 
     const submitOfferForm = () => {
-      console.log(offers);
       const offer = offers.find((offer) => offer.id === getOffer.value);
       if (offer) {
         offerDetails.value = offer;
         showOfferModal.value = true;
       } else {
-        console.error("Offer not found");
+        codeError.value = "Código não encontrado";
       }
     };
 
+    watch(getOffer, (newValue) => {
+      if (newValue) {
+        const offer = offers.find((offer) => offer.id === newValue);
+        if (offer) {
+          codeError.value = ""; // Reset the error message if the offer is found
+        }
+      }
+    });
+
     return {
+      codeError,
       getOffer,
       showOfferModal,
       offerDetails,

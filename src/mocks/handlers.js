@@ -3,13 +3,25 @@ import { http } from "msw";
 const offers = [
   {
     id: "OFFER_CODE",
-    name: "Special Offer",
-    price: 99.99,
-    items: ["Item  1", "Item  2"],
-    paymentOptions: ["Credit Card", "PayPal"],
-    productImages: ["image1.jpg", "image2.jpg"],
+    name: "Oferta Especial",
+    items: [
+      {
+        name: "Fone de Ouvido Bluetooth Sem Fio QCY T17 com Microfone Intra-auricular (Preto)",
+        oldPrice: 109,
+        newPrice: 98,
+        image:
+          "https://m.media-amazon.com/images/I/51TBSJF4B5L._AC_SL1326_.jpg",
+      },
+      {
+        name: "Teclado ABNT2 de membrana com fio, design retrô e teclas silenciosas e confortáveis, Cabos & Plugs (A)",
+        oldPrice: 132,
+        newPrice: 119,
+        image:
+          "https://m.media-amazon.com/images/I/513uhGvfDwL._AC_SL1200_.jpg",
+      },
+    ],
+    paymentOptions: ["Cartão de Crédito", "Pix", "Boleto Bancário"],
   },
-  // ... other offers
 ];
 
 export const handlers = [
