@@ -28,6 +28,7 @@
               <V-img :width="300" :src="item.image" alt="Item image" />
             </li>
           </ul>
+          <p>Total: R$ {{ totalNewPrice }},00</p>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -55,6 +56,17 @@ export default {
     AddressForm,
   },
   data() {},
+  computed: {
+    totalNewPrice() {
+      if (this.offerDetails && this.offerDetails.items) {
+        return this.offerDetails.items.reduce(
+          (total, item) => total + item.newPrice,
+          0
+        );
+      }
+      return 0;
+    },
+  },
   setup() {
     const getOffer = ref("");
     const codeError = ref("");
