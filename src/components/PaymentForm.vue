@@ -3,7 +3,12 @@
     <v-card-title>Formas de pagamento</v-card-title>
     <v-card-item>
       <v-form ref="paymentForm" :disabled="isDisabled">
-        <v-text-field label="CPF" v-model="userCpf"></v-text-field>
+        <v-text-field
+          label="CPF"
+          v-model="userCpf"
+          :error-messages="cpfError"
+          @input="checkUserCpf"
+        ></v-text-field>
 
         <v-radio-group
           v-model="selectedPaymentOption"
@@ -14,20 +19,24 @@
             :key="index"
             :label="paymentOption"
             :value="paymentOption"
+            required
           ></v-radio>
         </v-radio-group>
         <div v-if="selectedPaymentOption === 'Cartão de Crédito'">
           <v-text-field
             label="Número do Cartão"
             v-model="creditCardNumber"
+            required
           ></v-text-field>
           <v-text-field
             label="Código de Segurança"
             v-model="creditCardSecurityCode"
+            required
           ></v-text-field>
           <v-text-field
             label="Data de Validade"
             v-model="creditCardExpiryDate"
+            required
           ></v-text-field>
         </div>
         <div v-else-if="selectedPaymentOption === 'Pix'">
@@ -63,6 +72,8 @@ export default {
       creditCardSecurityCode: "",
       creditCardExpiryDate: "",
       isLoading: false,
+      userCpf: "",
+      cpfError: "",
     };
   },
   watch: {
@@ -79,6 +90,14 @@ export default {
     submitUserForm() {
       // Implement the form submission logic here
       // You can access the credit card details using this.creditCardNumber, this.creditCardSecurityCode, and this.creditCardExpiryDate
+    },
+    checkUserCpf() {
+      const cpf = this.userCpf.replace(/\D/g, "");
+      if (!(cpf.length === 11) || cpf == "00000000000") {
+        this.cpfError = "CPF Inválido";
+      } else {
+        this.cpfError = "";
+      }
     },
   },
   computed: {
