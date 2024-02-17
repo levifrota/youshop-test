@@ -8,7 +8,6 @@ export default createStore({
   getters: {},
   mutations: {
     setUserFormValid(state, isValid) {
-      console.log(isValid);
       state.userFormValid = isValid;
     },
     setAddressFormValid(state, isValid) {

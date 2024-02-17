@@ -29,7 +29,10 @@
           v-model="address.state"
           readonly
         ></v-text-field>
-        <v-text-field label="Número" v-model="houseNumber"></v-text-field>
+        <v-text-field
+          label="Número"
+          v-model="address.houseNumber"
+        ></v-text-field>
         <v-card-actions>
           <v-btn @click="submitAddressForm">Ir para Pagamento</v-btn>
         </v-card-actions>
@@ -49,9 +52,9 @@ export default {
         neighborhood: "",
         city: "",
         state: "",
+        houseNumber: "",
       },
       cepError: "",
-      houseNumber: "",
     };
   },
   methods: {
