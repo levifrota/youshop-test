@@ -24,6 +24,11 @@
         </v-radio-group>
         <div v-if="selectedPaymentOption === 'Cartão de Crédito'">
           <v-text-field
+            label="Nome no Cartão"
+            v-model="creditCardName"
+            required
+          ></v-text-field>
+          <v-text-field
             label="Número do Cartão"
             v-model="creditCardNumber"
             required
@@ -63,7 +68,9 @@
           </div>
         </div>
         <v-card-actions>
-          <v-btn @click="submitPaymentForm">Finalizar Pedido</v-btn>
+          <v-btn :disabled="isDisabled" @click="submitPaymentForm"
+            >Finalizar Pedido</v-btn
+          >
         </v-card-actions>
       </v-form>
     </v-card-item>
@@ -71,22 +78,23 @@
 </template>
 
 <script>
-import { offers } from "../mocks/handlers";
-import axios from "axios";
-
 export default {
   name: "PaymentForm",
   data() {
     return {
-      paymentOptions: offers[0].paymentOptions,
+      paymentOptions: [],
       selectedPaymentOption: null,
       creditCardNumber: "",
+      creditCardName: "",
       creditCardSecurityCode: "",
       creditCardExpiryDate: "",
       isLoading: false,
       userCpf: "",
       cpfError: "",
     };
+  },
+  created() {
+    this.fetchPaymentOptions();
   },
   watch: {
     selectedPaymentOption(newVal) {
@@ -97,8 +105,30 @@ export default {
         }, 3000);
       }
     },
+    "$store.state.orderCode": {
+      handler() {
+        this.fetchPaymentOptions();
+      },
+      immediate: true, // This will call fetchPaymentOptions immediately when the component is created
+    },
   },
   methods: {
+    fetchPaymentOptions() {
+      const offer = this.$store.state.orderCode;
+      fetch(`/offers/${offer}`)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          this.paymentOptions = data.paymentOptions;
+        })
+        .catch((error) => {
+          console.error("Error fetching payment options:", error);
+        });
+    },
     submitPaymentForm() {
       // Gather all the necessary data
       const clientData = this.$store.state.userData;
@@ -106,27 +136,24 @@ export default {
       const paymentData = {
         paymentOption: this.selectedPaymentOption,
         creditCardNumber: this.creditCardNumber,
+        creditCardName: this.creditCardName,
         creditCardSecurityCode: this.creditCardSecurityCode,
         creditCardExpiryDate: this.creditCardExpiryDate,
       };
-      const offer = "OFFER_CODE";
+      const offer = this.$store.state.orderCode;
 
       // Make the POST request
-      axios
-        .post(`/offers/${offer}/create_order`, {
+      fetch(`/offers/${offer}/create_order`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
           client: clientData,
           address: addressData,
           payment: paymentData,
-        })
-        .then((response) => {
-          // Handle successful response
-          console.log("Order created successfully:", response.data);
-          this.$store.commit("setOrderStatus", response.data.status);
-        })
-        .catch((error) => {
-          // Handle error
-          console.error("Error creating order:", error);
-        });
+        }),
+      });
     },
     checkUserCpf() {
       const cpf = this.userCpf.replace(/\D/g, "");

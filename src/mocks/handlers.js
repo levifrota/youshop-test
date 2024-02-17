@@ -7,15 +7,15 @@ const offers = [
     items: [
       {
         name: "Fone de Ouvido Bluetooth Sem Fio QCY T17 com Microfone Intra-auricular (Preto)",
-        oldPrice: 109,
-        newPrice: 98,
+        oldPrice: 109.98,
+        newPrice: 98.99,
         image:
           "https://m.media-amazon.com/images/I/51TBSJF4B5L._AC_SL1326_.jpg",
       },
       {
         name: "Teclado ABNT2 de membrana com fio, design retrô e teclas silenciosas e confortáveis, Cabos & Plugs (A)",
-        oldPrice: 132,
-        newPrice: 119,
+        oldPrice: 132.89,
+        newPrice: 119.98,
         image:
           "https://m.media-amazon.com/images/I/513uhGvfDwL._AC_SL1200_.jpg",
       },
@@ -33,19 +33,10 @@ export const handlers = [
       : HttpResponse(null, { status: 401 });
   }),
 
-  http.post("/offers/:offerCode/create_order", ({ params }) => {
-    const { offerCode } = params;
-    const offer = offers.find((offer) => offer.id === offerCode);
-
-    if (offer) {
-      // Mock the response data
-      return Response.json({
-        orderId: "12345",
-        status: "created",
-        message: "Order created successfully",
-      });
-    }
+  http.post("/offers/:offerCode/create_order", async ({ request }) => {
+    const requestBody = await request.json();
+    return HttpResponse.json({
+      content: requestBody,
+    });
   }),
 ];
-
-export { offers };

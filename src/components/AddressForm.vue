@@ -9,15 +9,10 @@
           :error-messages="cepError"
           @input="fetchAddressDetails"
         ></v-text-field>
-        <v-text-field
-          label="Rua"
-          v-model="address.street"
-          readonly
-        ></v-text-field>
+        <v-text-field label="Rua" v-model="address.street"></v-text-field>
         <v-text-field
           label="Bairro"
           v-model="address.neighborhood"
-          readonly
         ></v-text-field>
         <v-text-field
           label="Cidade"
@@ -34,7 +29,9 @@
           v-model="address.houseNumber"
         ></v-text-field>
         <v-card-actions>
-          <v-btn @click="submitAddressForm">Ir para Pagamento</v-btn>
+          <v-btn @click="submitAddressForm" :disabled="isDisabled"
+            >Ir para Pagamento</v-btn
+          >
         </v-card-actions>
       </v-form>
     </v-card-item>
@@ -60,7 +57,6 @@ export default {
   methods: {
     submitAddressForm() {
       // Handle address form submission
-      console.log("Address form submitted:", this.address);
       if (this.address) {
         this.$store.commit("setAddressFormValid", true);
         this.$store.commit("setAddressData", this.address);
@@ -104,5 +100,3 @@ export default {
   },
 };
 </script>
-
-<style></style>

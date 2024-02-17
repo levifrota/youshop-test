@@ -19,34 +19,26 @@
       </v-card>
       <div v-if="offerDetails && offerDetails.items" class="w-50">
         <v-card>
-          <ul>
-            <li v-for="(item, index) in offerDetails.items" :key="index">
-              <p>{{ item.name }}</p>
-              <p>
-                De:
-                <span class="text-decoration-line-through"
-                  >R$ {{ item.oldPrice }},00</span
-                >
-              </p>
-              <p>Por: R$ {{ item.newPrice }},00</p>
-              <v-img
-                :width="300"
-                :height="150"
-                :src="item.image"
-                alt="Item image"
-              />
-            </li>
-          </ul>
-          <p>Total: R$ {{ totalNewPrice }},00</p>
+          <CardItem
+            v-for="(item, index) in offerDetails.items"
+            :key="index"
+            :item="item"
+          />
+          <v-card-item>
+            Total:
+            <span> R$ {{ totalNewPrice.toString().replace(".", ",") }} </span>
+          </v-card-item>
         </v-card>
       </div>
     </div>
 
-    <UserForm :disabled="offerDetails === ''" />
+    <UserForm :disabled="!offerDetails" />
 
     <AddressForm />
 
     <PaymentForm />
+
+    <PaymentConfirmed />
   </v-container>
 </template>
 
@@ -54,6 +46,8 @@
 import UserForm from "./UserForm.vue";
 import AddressForm from "./AddressForm.vue";
 import PaymentForm from "./PaymentForm.vue";
+import CardItem from "./CardItem.vue";
+import PaymentConfirmed from "./PaymentConfirmed.vue";
 import axios from "axios";
 
 export default {
@@ -62,16 +56,20 @@ export default {
     UserForm,
     AddressForm,
     PaymentForm,
+    CardItem,
+    PaymentConfirmed,
   },
   data() {
     return {
       getOffer: "",
       codeError: "",
       showOfferModal: false,
-      offerDetails: "",
     };
   },
   computed: {
+    offerDetails() {
+      return this.$store.state.offerDetails;
+    },
     totalNewPrice() {
       if (this.offerDetails && this.offerDetails.items) {
         return this.offerDetails.items.reduce(
@@ -85,13 +83,14 @@ export default {
   methods: {
     async submitOfferForm() {
       if (this.getOffer) {
+        this.$store.commit("setOrderCode", this.getOffer);
         try {
           const response = await axios.get(`offers/${this.getOffer}`);
-          this.offerDetails = response.data;
+          this.$store.commit("setOfferDetails", response.data);
           this.codeError = ""; // Reset the error message if the offer is found
         } catch (error) {
           this.codeError = "Erro ao buscar oferta";
-          this.offerDetails = "";
+          this.$store.commit("clearOfferDetails");
         }
       }
     },

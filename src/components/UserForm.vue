@@ -35,13 +35,12 @@ export default {
   methods: {
     submitUserForm() {
       if (!this.user.name) {
-        this.nameError = "Name is required";
+        this.nameError = "Campo obrigatório";
         this.$store.commit("setUserFormValid", false);
         return;
       }
       this.nameError = ""; // Clear the error message if the name is valid
       // Handle user form submission
-      console.log("User form submitted:", this.user);
       this.$store.commit("setUserFormValid", true);
       this.$store.commit("setUserData", this.user);
     },
