@@ -43,6 +43,7 @@ export default {
       // Handle user form submission
       console.log("User form submitted:", this.user);
       this.$store.commit("setUserFormValid", true);
+      this.$store.commit("setUserData", this.user);
     },
   },
 };

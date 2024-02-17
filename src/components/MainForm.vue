@@ -54,8 +54,7 @@
 import UserForm from "./UserForm.vue";
 import AddressForm from "./AddressForm.vue";
 import PaymentForm from "./PaymentForm.vue";
-import { watchEffect } from "vue";
-import { offers } from "../mocks/handlers";
+import axios from "axios";
 
 export default {
   name: "MainForm",
@@ -84,25 +83,18 @@ export default {
     },
   },
   methods: {
-    submitOfferForm() {
-      const offer = offers.find((offer) => offer.id === this.getOffer);
-      if (offer) {
-        this.offerDetails = offer;
-        this.showOfferModal = true;
-      } else {
-        this.codeError = "Código não encontrado";
-      }
-    },
-  },
-  created() {
-    watchEffect(() => {
+    async submitOfferForm() {
       if (this.getOffer) {
-        const offer = offers.find((offer) => offer.id === this.getOffer);
-        if (offer) {
+        try {
+          const response = await axios.get(`offers/${this.getOffer}`);
+          this.offerDetails = response.data;
           this.codeError = ""; // Reset the error message if the offer is found
+        } catch (error) {
+          this.codeError = "Erro ao buscar oferta";
+          this.offerDetails = "";
         }
       }
-    });
+    },
   },
 };
 </script>

@@ -1,11 +1,11 @@
 <template>
-  <div class="about">
+  <div class="payment-confirmed">
     <h1>This is an about page</h1>
   </div>
 </template>
 
 <script>
 export default {
-  name: "DeliverAddress",
+  name: "PaymentConfirmed",
 };
 </script>

@@ -1,4 +1,4 @@
-import { http } from "msw";
+import { http, HttpResponse } from "msw";
 
 const offers = [
   {
@@ -25,19 +25,27 @@ const offers = [
 ];
 
 export const handlers = [
-  http.get(
-    "https://api.deepspacestore.com/offers/:offerCode",
-    (req, res, ctx) => {
-      const { offerCode } = req.params;
-      const offer = offers.find((offer) => offer.id === offerCode);
+  http.get("/offers/:offerCode", ({ params }) => {
+    const { offerCode } = params;
+    const offer = offers.find((offer) => offer.id === offerCode);
+    return offer
+      ? HttpResponse.json(offer)
+      : HttpResponse(null, { status: 401 });
+  }),
 
-      if (offer) {
-        return res(ctx.json(offer));
-      } else {
-        return res(ctx.status(404), ctx.json({ message: "Offer not found" }));
-      }
+  http.post("/offers/:offerCode/create_order", ({ params }) => {
+    const { offerCode } = params;
+    const offer = offers.find((offer) => offer.id === offerCode);
+
+    if (offer) {
+      // Mock the response data
+      return Response.json({
+        orderId: "12345",
+        status: "created",
+        message: "Order created successfully",
+      });
     }
-  ),
+  }),
 ];
 
 export { offers };

@@ -43,16 +43,27 @@
           <div v-if="isLoading">
             <v-progress-circular indeterminate></v-progress-circular>
           </div>
-          <v-img v-else src="/qr-code.png" :height="300" alt="QR Code"></v-img>
+          <div v-else>
+            <h3>Código Copia e Cola</h3>
+            <p>
+              00020126580014BR.GOV.BCB.PIX01365354d1a3-62a5-4c6b-bf8d-7511acfbdb045204000053039865802BR5925Gideao
+              Levi de Oliveira F6009SAO PAULO62140510Eqy8WV1jgS6304F02B
+            </p>
+            <v-img src="/qr-code.png" :height="300" alt="QR Code"></v-img>
+          </div>
         </div>
         <div v-else-if="selectedPaymentOption === 'Boleto Bancário'">
           <div v-if="isLoading">
             <v-progress-circular indeterminate></v-progress-circular>
           </div>
-          <v-img v-else src="/boleto.png" :height="200" alt="Boleto"></v-img>
+          <div v-else>
+            <h3>Código do Boleto</h3>
+            <p>26090.54834 30320.515635 74000.000005. 8 96360000002000</p>
+            <v-img src="/boleto.png" :height="200" alt="Boleto"></v-img>
+          </div>
         </div>
         <v-card-actions>
-          <v-btn @click="submitUserForm">Finalizar Pedido</v-btn>
+          <v-btn @click="submitPaymentForm">Finalizar Pedido</v-btn>
         </v-card-actions>
       </v-form>
     </v-card-item>
@@ -61,6 +72,7 @@
 
 <script>
 import { offers } from "../mocks/handlers";
+import axios from "axios";
 
 export default {
   name: "PaymentForm",
@@ -87,9 +99,34 @@ export default {
     },
   },
   methods: {
-    submitUserForm() {
-      // Implement the form submission logic here
-      // You can access the credit card details using this.creditCardNumber, this.creditCardSecurityCode, and this.creditCardExpiryDate
+    submitPaymentForm() {
+      // Gather all the necessary data
+      const clientData = this.$store.state.userData;
+      const addressData = this.$store.state.addressData;
+      const paymentData = {
+        paymentOption: this.selectedPaymentOption,
+        creditCardNumber: this.creditCardNumber,
+        creditCardSecurityCode: this.creditCardSecurityCode,
+        creditCardExpiryDate: this.creditCardExpiryDate,
+      };
+      const offer = "OFFER_CODE";
+
+      // Make the POST request
+      axios
+        .post(`/offers/${offer}/create_order`, {
+          client: clientData,
+          address: addressData,
+          payment: paymentData,
+        })
+        .then((response) => {
+          // Handle successful response
+          console.log("Order created successfully:", response.data);
+          this.$store.commit("setOrderStatus", response.data.status);
+        })
+        .catch((error) => {
+          // Handle error
+          console.error("Error creating order:", error);
+        });
     },
     checkUserCpf() {
       const cpf = this.userCpf.replace(/\D/g, "");

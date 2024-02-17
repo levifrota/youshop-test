@@ -61,9 +61,12 @@ export default {
     submitAddressForm() {
       // Handle address form submission
       console.log("Address form submitted:", this.address);
-      this.address
-        ? this.$store.commit("setAddressFormValid", true)
-        : this.$store.commit("setAddressFormValid", false);
+      if (this.address) {
+        this.$store.commit("setAddressFormValid", true);
+        this.$store.commit("setAddressData", this.address);
+      } else {
+        this.$store.commit("setAddressFormValid", false);
+      }
     },
     fetchAddressDetails() {
       const cep = this.address.cep.replace(/\D/g, ""); // Remove non-numeric characters
