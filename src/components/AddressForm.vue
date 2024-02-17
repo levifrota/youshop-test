@@ -1,99 +1,100 @@
 <template>
-  <v-form ref="addressForm">
-    <v-text-field
-      label="CEP"
-      v-model="address.cep"
-      :error-messages="cepError"
-      @input="fetchAddressDetails"
-    ></v-text-field>
-    <v-text-field
-      v-if="!cepError"
-      label="Rua"
-      v-model="address.street"
-      readonly
-    ></v-text-field>
-    <v-text-field
-      v-if="!cepError"
-      label="Bairro"
-      v-model="address.neighborhood"
-      readonly
-    ></v-text-field>
-    <v-text-field
-      v-if="!cepError"
-      label="Cidade"
-      v-model="address.city"
-      readonly
-    ></v-text-field>
-    <v-text-field
-      v-if="!cepError"
-      label="Estado"
-      v-model="address.state"
-      readonly
-    ></v-text-field>
-    <v-text-field
-      v-if="!cepError"
-      label="Número"
-      v-model="houseNumber"
-    ></v-text-field>
-    <v-btn @click="submitAddressForm">Ir para Pagamento</v-btn>
-  </v-form>
+  <v-card>
+    <v-card-title>Endereço de Entrega</v-card-title>
+    <v-card-item>
+      <v-form :disabled="isDisabled">
+        <v-text-field
+          label="CEP"
+          v-model="address.cep"
+          :error-messages="cepError"
+          @input="fetchAddressDetails"
+        ></v-text-field>
+        <v-text-field
+          label="Rua"
+          v-model="address.street"
+          readonly
+        ></v-text-field>
+        <v-text-field
+          label="Bairro"
+          v-model="address.neighborhood"
+          readonly
+        ></v-text-field>
+        <v-text-field
+          label="Cidade"
+          v-model="address.city"
+          readonly
+        ></v-text-field>
+        <v-text-field
+          label="Estado"
+          v-model="address.state"
+          readonly
+        ></v-text-field>
+        <v-text-field label="Número" v-model="houseNumber"></v-text-field>
+        <v-card-actions>
+          <v-btn @click="submitAddressForm">Ir para Pagamento</v-btn>
+        </v-card-actions>
+      </v-form>
+    </v-card-item>
+  </v-card>
 </template>
 
 <script>
-import { ref } from "vue";
-
 export default {
   name: "AddressForm",
-  setup() {
-    const address = ref({
-      cep: "",
-      street: "",
-      neighborhood: "",
-      city: "",
-      state: "",
-    });
-
-    const cepError = ref("");
-
-    const submitAddressForm = () => {
-      // Handle address form submission
-      console.log("Address form submitted:", address.value);
-    };
-
-    const fetchAddressDetails = async () => {
-      const cep = address.value.cep.replace(/\D/g, ""); // Remove non-numeric characters
-      if (cep.length === 8) {
-        try {
-          const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-          const data = await response.json();
-          if (data.erro) {
-            cepError.value = "CEP not found";
-            address.value.street = "";
-            address.value.neighborhood = "";
-            address.value.city = "";
-            address.value.state = "";
-          } else {
-            cepError.value = "";
-            address.value.street = data.logradouro;
-            address.value.neighborhood = data.bairro;
-            address.value.city = data.localidade;
-            address.value.state = data.uf;
-          }
-        } catch (error) {
-          cepError.value = "Error fetching address details";
-          console.error("Error fetching address details:", error);
-        }
-      } else {
-        cepError.value = "O número do CEP deve conter 8 dígitos";
-      }
-    };
-
+  data() {
     return {
-      address,
-      cepError,
-      submitAddressForm,
-      fetchAddressDetails,
+      address: {
+        cep: "",
+        street: "",
+        neighborhood: "",
+        city: "",
+        state: "",
+      },
+      cepError: "",
+      houseNumber: "",
     };
+  },
+  methods: {
+    submitAddressForm() {
+      // Handle address form submission
+      console.log("Address form submitted:", this.address);
+      this.address
+        ? this.$store.commit("setAddressFormValid", true)
+        : this.$store.commit("setAddressFormValid", false);
+    },
+    fetchAddressDetails() {
+      const cep = this.address.cep.replace(/\D/g, ""); // Remove non-numeric characters
+      if (cep.length === 8) {
+        fetch(`https://viacep.com.br/ws/${cep}/json/`)
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.erro) {
+              this.cepError = "CEP não encontrado";
+              this.address.street = "";
+              this.address.neighborhood = "";
+              this.address.city = "";
+              this.address.state = "";
+            } else {
+              this.cepError = "";
+              this.address.street = data.logradouro;
+              this.address.neighborhood = data.bairro;
+              this.address.city = data.localidade;
+              this.address.state = data.uf;
+            }
+          })
+          .catch((error) => {
+            this.cepError = "Algo deu errado.";
+            console.error("Error fetching address details:", error);
+          });
+      } else {
+        this.cepError = "O número do CEP deve conter  8 dígitos";
+      }
+    },
+  },
+  computed: {
+    isDisabled() {
+      return !this.$store.state.userFormValid;
+    },
   },
 };
 </script>

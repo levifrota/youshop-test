@@ -1,20 +1,24 @@
 <template>
   <v-container>
-    <v-form ref="offerForm">
-      <v-text-field
-        label="Offer Code"
-        v-model="getOffer"
-        :error-messages="codeError"
-        required
-      ></v-text-field>
-      <v-btn @click="submitOfferForm">Submit Offer Code</v-btn>
-    </v-form>
-    <v-dialog v-model="showOfferModal" max-width="500px">
-      <v-card>
-        <v-card-title>
-          <span class="headline">{{ offerDetails.name }}</span>
-        </v-card-title>
-        <v-card-text>
+    <div class="d-flex align-start justify-space-around">
+      <v-card class="w-25">
+        <v-card-title>Insira seu código</v-card-title>
+        <v-card-item>
+          <v-form ref="offerForm">
+            <v-text-field
+              label="Digite o código"
+              v-model="getOffer"
+              :error-messages="codeError"
+              required
+            ></v-text-field>
+            <v-card-actions class="d-flex justify-center">
+              <v-btn @click="submitOfferForm">Ativar Código</v-btn>
+            </v-card-actions>
+          </v-form>
+        </v-card-item>
+      </v-card>
+      <div v-if="offerDetails && offerDetails.items" class="w-50">
+        <v-card>
           <ul>
             <li v-for="(item, index) in offerDetails.items" :key="index">
               <p>{{ item.name }}</p>
@@ -25,28 +29,32 @@
                 >
               </p>
               <p>Por: R$ {{ item.newPrice }},00</p>
-              <V-img :width="300" :src="item.image" alt="Item image" />
+              <v-img
+                :width="300"
+                :height="150"
+                :src="item.image"
+                alt="Item image"
+              />
             </li>
           </ul>
           <p>Total: R$ {{ totalNewPrice }},00</p>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="showOfferModal = false"
-            >Close</v-btn
-          >
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-    <UserForm />
+        </v-card>
+      </div>
+    </div>
+
+    <UserForm :disabled="offerDetails === ''" />
+
     <AddressForm />
+
+    <PaymentForm />
   </v-container>
 </template>
 
 <script>
 import UserForm from "./UserForm.vue";
 import AddressForm from "./AddressForm.vue";
-import { ref, watch } from "vue";
+import PaymentForm from "./PaymentForm.vue";
+import { watchEffect } from "vue";
 import { offers } from "../mocks/handlers";
 
 export default {
@@ -54,8 +62,16 @@ export default {
   components: {
     UserForm,
     AddressForm,
+    PaymentForm,
   },
-  data() {},
+  data() {
+    return {
+      getOffer: "",
+      codeError: "",
+      showOfferModal: false,
+      offerDetails: "",
+    };
+  },
   computed: {
     totalNewPrice() {
       if (this.offerDetails && this.offerDetails.items) {
@@ -67,38 +83,26 @@ export default {
       return 0;
     },
   },
-  setup() {
-    const getOffer = ref("");
-    const codeError = ref("");
-    const showOfferModal = ref(false);
-    const offerDetails = ref(null);
-
-    const submitOfferForm = () => {
-      const offer = offers.find((offer) => offer.id === getOffer.value);
+  methods: {
+    submitOfferForm() {
+      const offer = offers.find((offer) => offer.id === this.getOffer);
       if (offer) {
-        offerDetails.value = offer;
-        showOfferModal.value = true;
+        this.offerDetails = offer;
+        this.showOfferModal = true;
       } else {
-        codeError.value = "Código não encontrado";
+        this.codeError = "Código não encontrado";
       }
-    };
-
-    watch(getOffer, (newValue) => {
-      if (newValue) {
-        const offer = offers.find((offer) => offer.id === newValue);
+    },
+  },
+  created() {
+    watchEffect(() => {
+      if (this.getOffer) {
+        const offer = offers.find((offer) => offer.id === this.getOffer);
         if (offer) {
-          codeError.value = ""; // Reset the error message if the offer is found
+          this.codeError = ""; // Reset the error message if the offer is found
         }
       }
     });
-
-    return {
-      codeError,
-      getOffer,
-      showOfferModal,
-      offerDetails,
-      submitOfferForm,
-    };
   },
 };
 </script>
