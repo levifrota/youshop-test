@@ -1,6 +1,6 @@
 <template>
   <v-card-item>
-    <div class="d-flex flex-row-reverse align-center item">
+    <div class="d-flex flex-row-reverse align-center justify-center item">
       <div class="item-info">
         <p>{{ item.name }}</p>
         <p>
@@ -9,14 +9,15 @@
             R$ {{ item.oldPrice.toString().replace(".", ",") }}
           </span>
         </p>
-        <p>Por: R$ {{ item.newPrice.toString().replace(".", ",") }}</p>
+        <p>
+          <b>Por: R$ {{ item.newPrice.toString().replace(".", ",") }}</b>
+        </p>
       </div>
       <v-img
-        :width="100"
         :height="50"
         :src="item.image"
         alt="Item image"
-        class="mr-3"
+        class="offer-image mr-3"
       />
     </div>
     <v-divider :thickness="2"></v-divider>
@@ -36,9 +37,18 @@ export default {
 </script>
 
 <style scoped>
+.offer-image {
+  width: 10%;
+}
+.item-info {
+  width: 100%;
+}
 @media (max-width: 500px) {
   .item {
     flex-direction: column-reverse !important;
+  }
+  .offer-image {
+    width: 50%;
   }
 }
 </style>

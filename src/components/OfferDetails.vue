@@ -7,7 +7,7 @@
     />
     <v-card-item>
       Total:
-      <span> R$ {{ totalNewPrice.toString().replace(".", ",") }} </span>
+      <b> R$ {{ totalNewPrice.toString().replace(".", ",") }} </b>
     </v-card-item>
   </v-card>
 </template>

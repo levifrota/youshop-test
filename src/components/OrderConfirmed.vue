@@ -7,35 +7,44 @@
         width="70"
       ></v-img>
     </div>
-    <v-card class="w-75 mb-7">
-      <v-card-title>Detalhes do pedido {{ paymentData.id }}:</v-card-title>
-      <div class="order-details flex-sm-column">
+    <v-card class="mb-7">
+      <v-card-title>Detalhes do pedido:</v-card-title>
+      <div class="order-details">
         <v-card-item>
+          <div class="order-code d-flex align-center">
+            <h3>Código:&nbsp;</h3>
+            <p>{{ paymentData.id }}</p>
+          </div>
+
           <h3>Usuário:</h3>
           <div>
-            <p>Nome: {{ userData.name }}</p>
-            <p v-if="userData.email !== ''">Email: {{ userData.email }}</p>
-            <p v-if="userData.phone !== ''">Telefone: {{ userData.phone }}</p>
+            <p><b>Nome:</b> {{ userData.name }}</p>
+            <p v-if="userData.email !== ''">
+              <b>Email:</b> {{ userData.email }}
+            </p>
+            <p v-if="userData.phone !== ''">
+              <b>Telefone:</b> {{ userData.phone }}
+            </p>
           </div>
         </v-card-item>
         <v-card-item>
           <h3>Endereço:</h3>
           <div>
-            <p>CEP: {{ addressData.zipCode }}</p>
-            <p>Rua: {{ addressData.street }}</p>
-            <p>Cidade: {{ addressData.city }}</p>
-            <p>Bairro: {{ addressData.neighborhood }}</p>
-            <p>Cidade: {{ addressData.city }}</p>
-            <p>Estado: {{ addressData.state }}</p>
+            <p><b>CEP:</b> {{ addressData.zipCode }}</p>
+            <p><b>Rua:</b> {{ addressData.street }}</p>
+            <p><b>Cidade:</b> {{ addressData.city }}</p>
+            <p><b>Bairro:</b> {{ addressData.neighborhood }}</p>
+            <p><b>Cidade:</b> {{ addressData.city }}</p>
+            <p><b>Estado:</b> {{ addressData.state }}</p>
             <p v-if="addressData.houseNumber !== ''">
-              Número: {{ addressData.houseNumber }}
+              <b>Número:</b> {{ addressData.houseNumber }}
             </p>
           </div>
         </v-card-item>
         <v-card-item>
           <h3>Pagamento:</h3>
           <div>
-            <p>Método: {{ paymentData.paymentOption }}</p>
+            <p><b>Método:</b> {{ paymentData.paymentOption }}</p>
           </div>
         </v-card-item>
       </div>
@@ -84,17 +93,15 @@ export default {
 .order-details {
   display: flex;
   align-items: flex-start;
+  flex-wrap: wrap;
 }
-@media (max-width: 600px) {
+@media (max-width: 880px) {
   .order-confirmed {
     flex-direction: column-reverse;
   }
   .order-confirmed h1 {
     text-align: center;
     padding: 0 !important;
-  }
-  .order-details {
-    flex-direction: column;
   }
 }
 </style>

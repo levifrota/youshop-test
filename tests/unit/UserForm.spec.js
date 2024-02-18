@@ -78,4 +78,13 @@ describe("UserForm.vue", () => {
     expect(wrapper.vm.nameError).toBe("Campo obrigatório");
     expect(mockStore.state.userFormValid).toBe(false);
   });
+
+  it("shows an error message when the phone number field is empty", async () => {
+    // Trigger the submitUserForm method with an empty phone number
+    await wrapper.vm.submitUserForm();
+
+    // Check if the error message is set for the phone number
+    expect(wrapper.vm.phoneError).toBe("Campo obrigatório");
+    expect(mockStore.state.userFormValid).toBe(false);
+  });
 });
