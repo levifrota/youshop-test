@@ -1,3 +1,4 @@
+/* eslint-disable */
 module.exports = {
   root: true,
   env: {
@@ -32,4 +33,14 @@ module.exports = {
       },
     },
   ],
+  settings: {
+    node: {
+      resolvePaths: [__dirname],
+    },
+    "import/resolver": {
+      node: {
+        extensions: [".js", ".vue"],
+      },
+    },
+  },
 };

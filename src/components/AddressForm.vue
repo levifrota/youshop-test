@@ -5,8 +5,8 @@
       <v-form :disabled="isDisabled">
         <v-text-field
           label="CEP"
-          v-model="address.cep"
-          :error-messages="cepError"
+          v-model="address.zipCode"
+          :error-messages="zipCodeError"
           @input="fetchAddressDetails"
         ></v-text-field>
         <v-text-field label="Rua" v-model="address.street"></v-text-field>
@@ -44,40 +44,41 @@ export default {
   data() {
     return {
       address: {
-        cep: "",
+        zipCode: "",
         street: "",
         neighborhood: "",
         city: "",
         state: "",
         houseNumber: "",
       },
-      cepError: "",
+      zipCodeError: "",
     };
   },
   methods: {
     submitAddressForm() {
       // Handle address form submission
-      if (this.address) {
+      if (this.address.zipCode !== "" && this.zipCodeError === "") {
         this.$store.commit("setAddressFormValid", true);
         this.$store.commit("setAddressData", this.address);
       } else {
         this.$store.commit("setAddressFormValid", false);
+        this.zipCodeError = "Digite um CEP válido";
       }
     },
     fetchAddressDetails() {
-      const cep = this.address.cep.replace(/\D/g, ""); // Remove non-numeric characters
-      if (cep.length === 8) {
-        fetch(`https://viacep.com.br/ws/${cep}/json/`)
+      const zipCode = this.address.zipCode.replace(/\D/g, ""); // Remove non-numeric characters
+      if (zipCode.length === 8) {
+        fetch(`https://viacep.com.br/ws/${zipCode}/json/`)
           .then((response) => response.json())
           .then((data) => {
             if (data.erro) {
-              this.cepError = "CEP não encontrado";
+              this.zipCodeError = "CEP não encontrado";
               this.address.street = "";
               this.address.neighborhood = "";
               this.address.city = "";
               this.address.state = "";
             } else {
-              this.cepError = "";
+              this.zipCodeError = "";
               this.address.street = data.logradouro;
               this.address.neighborhood = data.bairro;
               this.address.city = data.localidade;
@@ -85,11 +86,15 @@ export default {
             }
           })
           .catch((error) => {
-            this.cepError = "Algo deu errado.";
+            this.zipCodeError = "Algo deu errado.";
             console.error("Error fetching address details:", error);
           });
       } else {
-        this.cepError = "O número do CEP deve conter  8 dígitos";
+        this.zipCodeError = "O número do CEP deve conter 8 dígitos";
+        this.address.street = "";
+        this.address.neighborhood = "";
+        this.address.city = "";
+        this.address.state = "";
       }
     },
   },

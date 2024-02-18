@@ -18,27 +18,18 @@
         </v-card-item>
       </v-card>
       <div v-if="offerDetails && offerDetails.items" class="w-50">
-        <v-card>
-          <CardItem
-            v-for="(item, index) in offerDetails.items"
-            :key="index"
-            :item="item"
-          />
-          <v-card-item>
-            Total:
-            <span> R$ {{ totalNewPrice.toString().replace(".", ",") }} </span>
-          </v-card-item>
-        </v-card>
+        <OfferDetails
+          :offerDetails="offerDetails"
+          :totalNewPrice="totalNewPrice"
+        />
       </div>
     </div>
 
-    <UserForm :disabled="!offerDetails" />
+    <UserForm />
 
     <AddressForm />
 
     <PaymentForm />
-
-    <PaymentConfirmed />
   </v-container>
 </template>
 
@@ -46,9 +37,7 @@
 import UserForm from "./UserForm.vue";
 import AddressForm from "./AddressForm.vue";
 import PaymentForm from "./PaymentForm.vue";
-import CardItem from "./CardItem.vue";
-import PaymentConfirmed from "./PaymentConfirmed.vue";
-import axios from "axios";
+import OfferDetails from "./OfferDetails.vue";
 
 export default {
   name: "MainForm",
@@ -56,8 +45,7 @@ export default {
     UserForm,
     AddressForm,
     PaymentForm,
-    CardItem,
-    PaymentConfirmed,
+    OfferDetails,
   },
   data() {
     return {
@@ -85,8 +73,12 @@ export default {
       if (this.getOffer) {
         this.$store.commit("setOrderCode", this.getOffer);
         try {
-          const response = await axios.get(`offers/${this.getOffer}`);
-          this.$store.commit("setOfferDetails", response.data);
+          const response = await fetch(`offers/${this.getOffer}`);
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          const data = await response.json();
+          this.$store.commit("setOfferDetails", data);
           this.codeError = ""; // Reset the error message if the offer is found
         } catch (error) {
           this.codeError = "Erro ao buscar oferta";

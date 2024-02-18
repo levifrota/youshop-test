@@ -11,7 +11,6 @@ export default createStore({
     orderStatus: null,
     offerDetails: null,
   },
-  getters: {},
   mutations: {
     setOrderCode(state, orderCode) {
       state.orderCode = orderCode;
@@ -34,10 +33,8 @@ export default createStore({
     setAddressData(state, addressData) {
       state.addressData = addressData;
     },
-    setOrderStatus(state, orderStatus) {
-      state.orderStatus = orderStatus;
+    setPaymentData(state, paymentData) {
+      state.paymentData = paymentData;
     },
   },
-  actions: {},
-  modules: {},
 });

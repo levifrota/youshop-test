@@ -1,6 +1,6 @@
 <template>
   <v-card-item>
-    <div class="d-flex flex-row-reverse align-center">
+    <div class="d-flex flex-row-reverse align-center item">
       <div class="item-info">
         <p>{{ item.name }}</p>
         <p>
@@ -34,3 +34,11 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+@media (max-width: 500px) {
+  .item {
+    flex-direction: column-reverse !important;
+  }
+}
+</style>

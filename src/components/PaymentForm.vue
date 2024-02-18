@@ -13,6 +13,7 @@
         <v-radio-group
           v-model="selectedPaymentOption"
           label="Defina um meio de pagamento"
+          :error-messages="radioError"
         >
           <v-radio
             v-for="(paymentOption, index) in paymentOptions"
@@ -63,7 +64,7 @@
           </div>
           <div v-else>
             <h3>Código do Boleto</h3>
-            <p>26090.54834 30320.515635 74000.000005. 8 96360000002000</p>
+            <p>26090.54834 30320.515635 74000.000005 8 96360000002000</p>
             <v-img src="/boleto.png" :height="200" alt="Boleto"></v-img>
           </div>
         </div>
@@ -91,6 +92,8 @@ export default {
       isLoading: false,
       userCpf: "",
       cpfError: "",
+      radioError: "",
+      uniqueId: "",
     };
   },
   created() {
@@ -129,8 +132,13 @@ export default {
           console.error("Error fetching payment options:", error);
         });
     },
+    generateUniqueId() {
+      return "#" + Math.random().toString(36).substring(2, 7);
+    },
     submitPaymentForm() {
       // Gather all the necessary data
+      this.uniqueId = this.generateUniqueId();
+      console.log("id", this.uniqueId);
       const clientData = this.$store.state.userData;
       const addressData = this.$store.state.addressData;
       const paymentData = {
@@ -139,21 +147,45 @@ export default {
         creditCardName: this.creditCardName,
         creditCardSecurityCode: this.creditCardSecurityCode,
         creditCardExpiryDate: this.creditCardExpiryDate,
+        id: this.uniqueId,
       };
       const offer = this.$store.state.orderCode;
-
-      // Make the POST request
-      fetch(`/offers/${offer}/create_order`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          client: clientData,
-          address: addressData,
-          payment: paymentData,
-        }),
-      });
+      if (
+        this.cpfError === "" &&
+        this.userCpf !== "" &&
+        this.selectedPaymentOption !== null
+      ) {
+        // Make the POST request
+        fetch(`/offers/${offer}/create_order`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            client: clientData,
+            address: addressData,
+            payment: paymentData,
+          }),
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Network response was not ok");
+            }
+            this.$router.push({ name: "order-placed" });
+            this.$store.commit("setPaymentData", paymentData);
+          })
+          .catch((error) => {
+            console.error("Error submitting payment form:", error);
+            // Handle the error appropriately, e.g., show an error message to the user
+          });
+      } else {
+        this.userCpf === ""
+          ? (this.cpfError = "CPF é obrigatório")
+          : (this.cpfError = "");
+        this.selectedPaymentOption === null
+          ? (this.radioError = "Escolha um meio de pagamento")
+          : (this.radioError = "");
+      }
     },
     checkUserCpf() {
       const cpf = this.userCpf.replace(/\D/g, "");
