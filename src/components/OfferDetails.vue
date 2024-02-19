@@ -1,5 +1,6 @@
 <template>
   <v-card>
+    <v-card-title>Itens:</v-card-title>
     <CardItem
       v-for="(item, index) in offerDetails.items"
       :key="index"

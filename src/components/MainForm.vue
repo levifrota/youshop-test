@@ -4,7 +4,7 @@
       <v-card class="w-25">
         <v-card-title>Insira seu código</v-card-title>
         <v-card-item>
-          <v-form ref="offerForm">
+          <v-form>
             <v-text-field
               label="Digite o código"
               v-model="getOffer"
@@ -17,7 +17,7 @@
           </v-form>
         </v-card-item>
       </v-card>
-      <div v-if="offerDetails && offerDetails.items" class="w-50">
+      <div v-if="offerDetails && offerDetails.items" class="offer-details w-50">
         <OfferDetails
           :offerDetails="offerDetails"
           :totalNewPrice="totalNewPrice"

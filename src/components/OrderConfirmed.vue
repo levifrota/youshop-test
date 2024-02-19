@@ -49,12 +49,7 @@
         </v-card-item>
       </div>
     </v-card>
-    <v-divider></v-divider>
-    <OfferDetails
-      :offerDetails="offerDetails"
-      :totalNewPrice="totalNewPrice"
-      class="w-75"
-    />
+    <OfferDetails :offerDetails="offerDetails" :totalNewPrice="totalNewPrice" />
   </v-container>
 </template>
 
