@@ -51,10 +51,13 @@
           </div>
           <div v-else>
             <h3>Código Copia e Cola</h3>
-            <p>
-              00020126580014BR.GOV.BCB.PIX01365354d1a3-62a5-4c6b-bf8d-7511acfbdb045204000053039865802BR5925Gideao
-              Levi de Oliveira F6009SAO PAULO62140510Eqy8WV1jgS6304F02B
-            </p>
+            <div class="copy-code">
+              <p>
+                00020126580014BR.GOV.BCB.PIX01365354d1a3-62a5-4c6b-bf8d-7511acfbdb045204000053039865802BR5925Gideao
+                Levi de Oliveira F6009SAO PAULO62140510Eqy8WV1jgS6304F02B
+              </p>
+              <v-btn v-clipboard="pixValue">Copiar código</v-btn>
+            </div>
             <v-img src="/qr-code.png" :height="300" alt="QR Code"></v-img>
           </div>
         </div>
@@ -63,8 +66,11 @@
             <v-progress-circular indeterminate></v-progress-circular>
           </div>
           <div v-else>
-            <h3>Código do Boleto</h3>
-            <p>26090.54834 30320.515635 74000.000005 8 96360000002000</p>
+            <div class="copy-code">
+              <h3>Código do Boleto</h3>
+              <p>26090.54834 30320.515635 74000.000005 8 96360000002000</p>
+              <v-btn v-clipboard="billValue">Copiar código</v-btn>
+            </div>
             <v-img src="/boleto.png" :height="200" alt="Boleto"></v-img>
           </div>
         </div>
@@ -94,6 +100,9 @@ export default {
       cpfError: "",
       radioError: "",
       uniqueId: "",
+      pixValue:
+        "00020126580014BR.GOV.BCB.PIX01365354d1a3-62a5-4c6b-bf8d-7511acfbdb045204000053039865802BR5925Gideao Levi de Oliveira F6009SAO PAULO62140510Eqy8WV1jgS6304F02B",
+      billValue: "26090.54834 30320.515635 74000.000005 8 96360000002000",
     };
   },
   created() {
@@ -105,7 +114,7 @@ export default {
         this.isLoading = true;
         setTimeout(() => {
           this.isLoading = false;
-        }, 3000);
+        }, 1000);
       }
     },
     "$store.state.orderCode": {

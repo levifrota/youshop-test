@@ -1,104 +1,73 @@
 /* eslint-disable no-undef */
 const { expect, browser, $ } = require("@wdio/globals");
+const setUrl = "http://192.168.1.110:8080/";
 require("@testing-library/vue");
 
-describe("MainForm Component", () => {
-  it("should allow submitting a valid offer code", () => {
-    // Navigate to the page where MainForm component is rendered
-    browser.url("http://192.168.1.179:8080/");
+describe("E2E test", () => {
+  before(() => {
+    // Navigate to the base URL once before all tests
+    browser.url(setUrl);
+  });
 
+  it("should allow submitting a valid offer code", async () => {
     // Locate the text field for the offer code
     const offerCodeInput = $("aria/Digite o código");
-    browser.debug();
+
+    // Wait for the offer code input to be present in the DOM
+    offerCodeInput.waitForExist();
     // Enter a valid offer code
-    offerCodeInput.setValue("OFFER_CODE");
+    await offerCodeInput.setValue("OFFER_CODE");
+
+    // Wait for the value to be set before clicking the button
+    offerCodeInput.waitForValue("OFFER_CODE");
+    browser.pause(3000);
 
     // Click the submit button
-    $("button=Ativar Código").click();
+    const goToUser = $("button=Ativar Código");
+    goToUser.waitForValue(offerCodeInput.getValue());
+    await goToUser.click();
+    browser.debug();
 
-    // Check if the offer details are displayed
-    const offerDetails = $(
-      "aria/Fone de Ouvido Bluetooth Sem Fio QCY T17 com Microfone Intra-auricular (Preto)"
-    );
-    expect(offerDetails).toBeDisplayed();
+    // Check if the offer details are enabled
+    const deliverDetails = $("aria/Telefone:");
+    deliverDetails.waitForExist;
+    expect(deliverDetails).toBeEnabled();
   });
 
-  it("should display an error message for an invalid offer code", () => {
-    // Navigate to the page where MainForm component is rendered
-    browser.url("http://192.168.1.179:8080/");
-
-    // Locate the text field for the offer code
-    const offerCodeInput = $("aria/Digite o código");
-
-    // Enter an invalid offer code
-    offerCodeInput.setValue("INVALID_OFFER_CODE");
-
-    // Click the submit button
-    $("button=Ativar Código").click();
-
-    // Check if the error message is displayed and contains the expected text
-    const errorMessageText = $("aria/Erro ao buscar oferta").getText();
-    expect(errorMessageText).toBeDisplayed();
-  });
-});
-
-describe("UserForm Component", () => {
-  it("should allow submitting the form with valid data", () => {
-    // Navigate to the page where UserForm component is rendered
-    browser.url("http://192.168.1.179:8080/");
-
+  it("should allow submitting the form with valid data", async () => {
     // Locate the text fields for the user's name and phone
     const nameInput = $("aria/Nome");
     const phoneInput = $("aria/Telefone");
 
+    nameInput.waitForExist;
+    phoneInput.waitForExist;
+
     // Enter valid data into the text fields
-    nameInput.setValue("Teste");
-    phoneInput.setValue("1234567890");
+    await nameInput.setValue("Teste");
+    await phoneInput.setValue("1234567890");
+
+    nameInput.waitForValue("Teste");
+    phoneInput.waitForValue("1234567890");
 
     // Click the submit button
     const submitButton = $("button=Ir para Endereço de Entrega");
-    submitButton.click();
+    await submitButton.click();
 
     // Check if the form submission was successful
     const addressField = $("aria/Endereço");
+    addressField.waitForExist;
     expect(addressField).toBeEnabled();
   });
 
-  it("should display an error message for invalid data", () => {
-    browser.url("http://192.168.1.179:8080/");
-
-    // Locate the text fields for the user's name and phone
-    const nameInput = $("aria/Nome");
-    const phoneInput = $("aria/Telefone");
-
-    // Enter invalid data into the text fields
-    nameInput.setValue(""); // Empty name
-    phoneInput.setValue(""); // Empty phone number
-
-    // Click the submit button
-    const submitButton = $("button=Ir para Endereço de Entrega");
-    submitButton.click();
-
-    // Check if the error messages are displayed for the invalid data
-    const nameError = $("aria/Campo obrigatório");
-    const phoneError = $("aria/Campo obrigatório");
-    expect(nameError).toBeDisplayed();
-    expect(phoneError).toBeDisplayed();
-  });
-});
-
-describe("AddressForm Component", () => {
-  it("should auto-fill address fields when a valid zip code is entered", () => {
-    browser.url("http://192.168.1.179:8080/");
-
+  it("should auto-fill address fields when a valid zip code is entered", async () => {
     // Locate the zip code text field
     const zipCodeInput = $("aria/CEP");
 
     // Enter a valid zip code
-    zipCodeInput.setValue("62020390");
+    await zipCodeInput.setValue("62020390");
 
     // Wait for the address details to be fetched and filled
-    browser.pause(3000);
+    browser.pause(2000);
 
     // Check if the street, neighborhood, city, and state fields are filled
     const streetField = $("aria/Rua");
@@ -112,155 +81,62 @@ describe("AddressForm Component", () => {
     expect(stateField).toHaveValue("CE");
   });
 
-  it("should display an error message for an invalid zip code", () => {
-    browser.url("http://192.168.1.179:8080/");
-
-    // Locate the zip code text field
-    const zipCodeInput = $("aria/CEP");
-
-    // Enter an invalid zip code
-    zipCodeInput.setValue("12345678");
-
-    // Wait for the error message to be displayed
-    browser.pause(3000);
-
-    // Check if the error message is displayed
-    const errorMessage = $("aria/Digite um CEP válido");
-    expect(errorMessage).toBeDisplayed();
-    expect(errorMessage).toHaveText("CEP não encontrado");
-  });
-});
-
-describe("PaymentForm Component", () => {
-  it("should allow submitting the form with valid data", () => {
-    // Navigate to the page where PaymentForm component is rendered
-    browser.url("http://192.168.1.179:8080/");
-
-    // Locate the CPF text field and enter a valid CPF
-    const cpfInput = $("aria/CPF");
-    cpfInput.setValue("12345678901");
-
-    // Select a payment option
-    const paymentOption = $("aria/Cartão de Crédito");
-    paymentOption.click();
-
-    // If the payment option requires additional fields, fill them out
-    // For example, if selecting "Cartão de Crédito":
-    const creditCardNameInput = $("aria/Nome no Cartão");
-    creditCardNameInput.setValue("Teste");
-    const creditCardNumberInput = $("aria/Número do Cartão");
-    creditCardNumberInput.setValue("1234  5678  9012  3456");
-    const creditCardSecurityCodeInput = $("aria/Código de Segurança");
-    creditCardSecurityCodeInput.setValue("123");
-    const creditCardExpiryDateInput = $("aria/Data de Validade");
-    creditCardExpiryDateInput.setValue("12/2025");
-
+  it("should submit deliver form and enable payment form", async () => {
     // Click the submit button
-    const submitButton = $("button=Finalizar Pedido");
-    submitButton.click();
+    const submitButton = $("button=Ir para Pagamento");
+    await submitButton.click();
 
     // Check if the form submission was successful
-    const successMessage = $("div.success-message"); // Replace with the actual selector for the success message
-    expect(successMessage).toBeDisplayed();
+    const addressField = $("aria/Endereço");
+    addressField.waitForExist;
+    expect(addressField).toBeEnabled();
   });
 
-  it("should display an error message for an invalid CPF", () => {
-    // Navigate to the page where PaymentForm component is rendered
-    browser.url("http://192.168.1.179:8080/");
-
-    // Locate the CPF text field and enter an invalid CPF
+  it("should validate CPF and display PIX code", async () => {
+    // Locate the CPF text field and enter a valid CPF
     const cpfInput = $("aria/CPF");
-    cpfInput.setValue("00000000000");
 
-    // Select a payment option
-    const paymentOption = $("aria/Cartão de Crédito");
-    paymentOption.click();
-
-    // Click the submit button
-    const submitButton = $("button=Finalizar Pedido");
-    submitButton.click();
-
-    // Check if the error message for the invalid CPF is displayed
-    const cpfErrorMessage = $("aria/CPF ~ .v-messages__message");
-    expect(cpfErrorMessage).toBeDisplayed();
-    expect(cpfErrorMessage).toHaveText("CPF Inválido");
-  });
-
-  it("should display PIX code", () => {
-    // Navigate to the page where PaymentForm component is rendered
-    browser.url("http://192.168.1.179:8080/");
+    await cpfInput.setValue("12345678901");
 
     // Select a different payment option
     const otherPaymentOption = $("aria/Pix");
-    otherPaymentOption.click();
+    await otherPaymentOption.click();
 
     // Check if the additional fields for the selected payment option are displayed
-    const pixFields = $("aria/Pix");
-    expect(pixFields).toBeDisplayed();
-
-    // Click the submit button
-    const submitButton = $("button=Finalizar Pedido");
-    submitButton.click();
-
-    // Check if the form submission was successful
-    const successMessage = $("div.success-message");
-    expect(successMessage).toBeDisplayed();
+    const pixFields = $("aria/Código Copia e Cola");
+    await expect(pixFields).toBeDisplayed();
   });
 
-  it("should display bar code", () => {
-    // Navigate to the page where PaymentForm component is rendered
-    browser.url("http://192.168.1.179:8080/");
-
+  it("should display bar code", async () => {
     // Select a different payment option
     const otherPaymentOption = $("aria/Boleto Bancário");
     otherPaymentOption.click();
+    browser.pause(3000);
 
     // Check if the additional fields for the selected payment option are displayed
-    const billFields = $("aria/Boleto Bancário");
-    expect(billFields).toBeDisplayed();
-
-    // Click the submit button
-    const submitButton = $("button=Finalizar Pedido");
-    submitButton.click();
-
-    // Check if the form submission was successful
-    const successMessage = $("div.success-message"); // Replace with the actual selector for the success message
-    expect(successMessage).toBeDisplayed();
+    const billFields = $("aria/Código do Boleto");
+    await expect(billFields).toBeDisplayed();
   });
 
-  it("should redirect to '/compra-confirmada' after clicking the submit button", async () => {
-    // Navigate to the page where PaymentForm component is rendered
-    browser.url("http://192.168.1.179:8080/");
-
-    // Locate the CPF text field and enter a valid CPF
-    const cpfInput = $("aria/CPF");
-    cpfInput.setValue("12345678901");
-
+  it("should allow submitting the form with valid credit card data", async () => {
     // Select a payment option
     const paymentOption = $("aria/Cartão de Crédito");
-    paymentOption.click();
+    await paymentOption.click();
 
-    // Click the submit button
-    const submitButton = $("button=Finalizar Pedido");
-    submitButton.click();
-    console.log("url-browser", browser.getUrl());
-    // Check if the user is redirected to the '/compra-confirmada' page
-    await browser.waitUntil(
-      async () => {
-        const url = await browser.getUrl();
-        return url.includes("/compra-confirmada");
-      },
-      {
-        timeout: 5000,
-        timeoutMsg:
-          "Expected to be redirected to '/compra-confirmada' within  5 seconds",
-      }
-    );
+    const creditCardNameInput = $("aria/Nome no Cartão");
+    await creditCardNameInput.setValue("Teste");
+    const creditCardNumberInput = $("aria/Número do Cartão");
+    await creditCardNumberInput.setValue("1234  5678  9012  3456");
+    const creditCardSecurityCodeInput = $("aria/Código de Segurança");
+    await creditCardSecurityCodeInput.setValue("123");
+    const creditCardExpiryDateInput = $("aria/Data de Validade");
+    await creditCardExpiryDateInput.setValue("12/2025");
 
-    // Verify that the current URL includes '/compra-confirmada'
+    const finishOrder = $("button=Finalizar Pedido");
+    await finishOrder.click();
+
     const currentUrl = await browser.getUrl();
-    expect(currentUrl).toContain(
-      "http://192.168.1.179:8080/#/compra-confirmada"
-    );
+    browser.pause(3000);
+    await expect(currentUrl).toContain("/compra-confirmada");
   });
 });

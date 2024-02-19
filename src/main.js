@@ -5,6 +5,12 @@ import store from "./store";
 import "./mocks/browser";
 import vuetify from "./plugins/vuetify";
 import { loadFonts } from "./plugins/webfontloader";
+import VueClipboards from "vue-clipboards";
 
 loadFonts();
-createApp(App).use(router).use(store).use(vuetify).mount("#app");
+createApp(App)
+  .use(router)
+  .use(store)
+  .use(vuetify)
+  .use(VueClipboards)
+  .mount("#app");
