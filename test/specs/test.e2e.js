@@ -89,12 +89,7 @@ describe("E2E test", () => {
     expect(addressField).toBeEnabled();
   });
 
-  it("should validate CPF and display PIX code", async () => {
-    // Locate the CPF text field and enter a valid CPF
-    const cpfInput = $("aria/CPF");
-
-    await cpfInput.setValue("12345678901");
-
+  it("should display PIX code", async () => {
     // Select a different payment option
     const otherPaymentOption = $("aria/Pix");
     await otherPaymentOption.click();
@@ -114,7 +109,11 @@ describe("E2E test", () => {
     await expect(billFields).toBeDisplayed();
   });
 
-  it("should allow submitting the form with valid credit card data", async () => {
+  it("should validate CPF and allow submitting the form with valid credit card data", async () => {
+    // Locate the CPF text field and enter a valid CPF
+    const cpfInput = $("aria/CPF");
+
+    await cpfInput.setValue("12345678901");
     // Select credit card option
     const paymentOption = $("aria/Cartão de Crédito");
     await paymentOption.click();
