@@ -66,9 +66,6 @@ describe("E2E test", () => {
     // Enter a valid zip code
     await zipCodeInput.setValue("62020390");
 
-    // Wait for the address details to be fetched and filled
-    browser.pause(2000);
-
     // Check if the street, neighborhood, city, and state fields are filled
     const streetField = $("aria/Rua");
     const neighborhoodField = $("aria/Bairro");
@@ -111,7 +108,6 @@ describe("E2E test", () => {
     // Select a different payment option
     const otherPaymentOption = $("aria/Boleto Bancário");
     otherPaymentOption.click();
-    browser.pause(3000);
 
     // Check if the additional fields for the selected payment option are displayed
     const billFields = $("aria/Código do Boleto");
@@ -119,7 +115,7 @@ describe("E2E test", () => {
   });
 
   it("should allow submitting the form with valid credit card data", async () => {
-    // Select a payment option
+    // Select credit card option
     const paymentOption = $("aria/Cartão de Crédito");
     await paymentOption.click();
 
@@ -135,8 +131,19 @@ describe("E2E test", () => {
     const finishOrder = $("button=Finalizar Pedido");
     await finishOrder.click();
 
+    await browser.pause(3000);
     const currentUrl = await browser.getUrl();
-    browser.pause(3000);
-    await expect(currentUrl).toContain("/compra-confirmada");
+    expect(currentUrl).toContain("/compra-confirmada");
+  });
+
+  it("should display confirmation order", async () => {
+    const orderDetails = $("aria/Detalhes do pedido:");
+    orderDetails.waitForExist;
+
+    const orderItems = $("aria/Itens:");
+    orderItems.waitForExist;
+
+    await expect(orderDetails).toBeDisplayed();
+    await expect(orderItems).toBeDisplayed();
   });
 });

@@ -63,14 +63,17 @@ export default {
     OfferDetails,
   },
   computed: {
+    // Calls the state variables
     ...mapState({
       userData: (state) => state.userData,
       paymentData: (state) => state.paymentData,
       addressData: (state) => state.addressData,
+      offerData: (state) => state.offerDetails,
     }),
     offerDetails() {
-      return this.$store.state.offerDetails;
+      return this.offerData;
     },
+    // Sum of the items' prices with discount
     totalNewPrice() {
       if (this.offerDetails && this.offerDetails.items) {
         return this.offerDetails.items.reduce(

@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card class="address-form">
     <v-card-title>Endereço de Entrega</v-card-title>
     <v-card-item>
       <v-form :disabled="isDisabled">
@@ -105,3 +105,9 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.address-form {
+  width: 60%;
+}
+</style>

@@ -1,5 +1,5 @@
 <template>
-  <v-card class="mt-10 mb-10">
+  <v-card class="mt-10 mb-10 payment-form">
     <v-card-title>Formas de pagamento</v-card-title>
     <v-card-item>
       <v-form ref="paymentForm" :disabled="isDisabled">
@@ -66,10 +66,10 @@
             <v-progress-circular indeterminate></v-progress-circular>
           </div>
           <div v-else>
-            <div class="copy-code">
-              <h3>Código do Boleto</h3>
+            <h3>Código do Boleto</h3>
+            <div>
               <p>26090.54834 30320.515635 74000.000005 8 96360000002000</p>
-              <v-btn v-clipboard="billValue">Copiar código</v-btn>
+              <v-btn v-clipboard="() => billValue">Copiar código</v-btn>
             </div>
             <v-img src="/boleto.png" :height="200" alt="Boleto"></v-img>
           </div>
@@ -85,6 +85,8 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
+
 export default {
   name: "PaymentForm",
   data() {
@@ -105,9 +107,7 @@ export default {
       billValue: "26090.54834 30320.515635 74000.000005 8 96360000002000",
     };
   },
-  created() {
-    this.fetchPaymentOptions();
-  },
+  // Watch changes in radio selection
   watch: {
     selectedPaymentOption(newVal) {
       if (newVal === "Pix" || newVal === "Boleto Bancário") {
@@ -117,16 +117,18 @@ export default {
         }, 1000);
       }
     },
+    //When the order code is updated, the payment options are displayed
     "$store.state.orderCode": {
       handler() {
         this.fetchPaymentOptions();
       },
-      immediate: true, // This will call fetchPaymentOptions immediately when the component is created
+      // immediate: true, // This will call fetchPaymentOptions immediately when the component is created
     },
   },
   methods: {
+    //Gather all payment options in offer
     fetchPaymentOptions() {
-      const offer = this.$store.state.orderCode;
+      const offer = this.orderCode;
       fetch(`/offers/${offer}`)
         .then((response) => {
           if (!response.ok) {
@@ -141,15 +143,28 @@ export default {
           console.error("Error fetching payment options:", error);
         });
     },
+    // Generate an order ID
     generateUniqueId() {
       return "#" + Math.random().toString(36).substring(2, 7);
     },
+    //Mathod to validate CPF
+    validateCpf(cpf) {
+      const cleanedCpf = cpf.replace(/\D/g, "");
+      if (
+        cleanedCpf === "" ||
+        !(cleanedCpf.length === 11) ||
+        cleanedCpf === "00000000000"
+      ) {
+        return false;
+      }
+      return true;
+    },
+    // Gather all the data from user, address and payment.
+    // Then make the validation for user CPF and payment option.
+    // After that, the POST request is made.
     submitPaymentForm() {
       // Gather all the necessary data
       this.uniqueId = this.generateUniqueId();
-      console.log("id", this.uniqueId);
-      const clientData = this.$store.state.userData;
-      const addressData = this.$store.state.addressData;
       const paymentData = {
         paymentOption: this.selectedPaymentOption,
         creditCardNumber: this.creditCardNumber,
@@ -160,8 +175,7 @@ export default {
       };
       const offer = this.$store.state.orderCode;
       if (
-        this.cpfError === "" &&
-        this.userCpf !== "" &&
+        this.validateCpf(this.userCpf) &&
         this.selectedPaymentOption !== null
       ) {
         // Make the POST request
@@ -171,8 +185,8 @@ export default {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            client: clientData,
-            address: addressData,
+            client: this.userData,
+            address: this.addressData,
             payment: paymentData,
           }),
         })
@@ -180,25 +194,23 @@ export default {
             if (!response.ok) {
               throw new Error("Network response was not ok");
             }
+            // Button redirects to /compra-confirmada page
             this.$router.push({ name: "order-placed" });
             this.$store.commit("setPaymentData", paymentData);
           })
           .catch((error) => {
             console.error("Error submitting payment form:", error);
-            // Handle the error appropriately, e.g., show an error message to the user
           });
       } else {
-        this.userCpf === ""
-          ? (this.cpfError = "CPF é obrigatório")
-          : (this.cpfError = "");
+        this.cpfError = "CPF é obrigatório";
         this.selectedPaymentOption === null
           ? (this.radioError = "Escolha um meio de pagamento")
           : (this.radioError = "");
       }
     },
+    // Rule for the CPF input
     checkUserCpf() {
-      const cpf = this.userCpf.replace(/\D/g, "");
-      if (!(cpf.length === 11) || cpf == "00000000000") {
+      if (!this.validateCpf(this.userCpf)) {
         this.cpfError = "CPF Inválido";
       } else {
         this.cpfError = "";
@@ -206,6 +218,13 @@ export default {
     },
   },
   computed: {
+    // Calls the state variables
+    ...mapState({
+      userData: (state) => state.userData,
+      addressData: (state) => state.addressData,
+      orderCode: (state) => state.orderCode,
+    }),
+    // Enables the form if the address is valid
     isDisabled() {
       return !this.$store.state.addressFormValid;
     },
@@ -213,4 +232,8 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped>
+.payment-form {
+  width: 60%;
+}
+</style>

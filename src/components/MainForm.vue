@@ -1,7 +1,7 @@
 <template>
-  <v-container>
-    <div class="d-flex align-start justify-space-around">
-      <v-card class="w-25">
+  <v-container class="d-flex flex-column align-center">
+    <div class="d-flex align-start justify-space-around offer-input-details">
+      <v-card>
         <v-card-title>Insira seu código</v-card-title>
         <v-card-item>
           <v-form>
@@ -25,11 +25,13 @@
       </div>
     </div>
 
-    <UserForm />
+    <div class="d-flex flex-column align-center components-container">
+      <UserForm />
 
-    <AddressForm />
+      <AddressForm />
 
-    <PaymentForm />
+      <PaymentForm />
+    </div>
   </v-container>
 </template>
 
@@ -38,6 +40,7 @@ import UserForm from "./UserForm.vue";
 import AddressForm from "./AddressForm.vue";
 import PaymentForm from "./PaymentForm.vue";
 import OfferDetails from "./OfferDetails.vue";
+import { mapState } from "vuex";
 
 export default {
   name: "MainForm",
@@ -55,9 +58,14 @@ export default {
     };
   },
   computed: {
+    // Get offer details' state
+    ...mapState({
+      offerData: (state) => state.offerDetails,
+    }),
     offerDetails() {
-      return this.$store.state.offerDetails;
+      return this.offerData;
     },
+    // Sum of the items' prices with discount
     totalNewPrice() {
       if (this.offerDetails && this.offerDetails.items) {
         return this.offerDetails.items.reduce(
@@ -69,6 +77,7 @@ export default {
     },
   },
   methods: {
+    // If the offer code is valid, this method will update the getoffer state
     async submitOfferForm() {
       if (this.getOffer) {
         this.$store.commit("setOrderCode", this.getOffer);
@@ -89,3 +98,24 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.components-container {
+  width: 80%;
+}
+@media (max-width: 900px) {
+  .components-container {
+    width: 100%;
+  }
+}
+@media (max-width: 580px) {
+  .offer-input-details {
+    flex-direction: column;
+    align-items: center !important;
+  }
+  .offer-details {
+    margin-top: 2rem;
+    width: 80% !important;
+  }
+}
+</style>

@@ -1,5 +1,5 @@
 <template>
-  <v-card class="mt-10 mb-10">
+  <v-card class="mt-10 mb-10 user-form">
     <v-card-title>Insira seus dados</v-card-title>
     <v-card-item>
       <v-form ref="userForm" :disabled="isDisabled">
@@ -41,6 +41,7 @@ export default {
     };
   },
   methods: {
+    // Checks the user name and phone, then update the state
     submitUserForm() {
       if (!this.user.name || !this.user.phone) {
         this.user.name
@@ -59,6 +60,7 @@ export default {
       this.$store.commit("setUserData", this.user);
     },
   },
+  // Form is enabled if offerDetails is valid
   computed: {
     isDisabled() {
       return !this.$store.state.offerDetails;
@@ -67,4 +69,8 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped>
+.user-form {
+  width: 60%;
+}
+</style>
