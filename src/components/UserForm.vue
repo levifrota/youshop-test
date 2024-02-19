@@ -15,6 +15,7 @@
           v-model="user.phone"
           required
           :error-messages="phoneError"
+          @input="checkUserPhone"
         ></v-text-field>
         <v-card-actions>
           <v-btn @click="submitUserForm" :disabled="isDisabled"
@@ -41,14 +42,22 @@ export default {
     };
   },
   methods: {
+    checkUserPhone(userPhone) {
+      const phoneRegex = /^\d+$/; // Regular expression to match only digits
+      if (userPhone === "" || !phoneRegex.test(this.user.phone)) {
+        return false;
+      } else {
+        return true;
+      }
+    },
     // Checks the user name and phone, then update the state
     submitUserForm() {
-      if (!this.user.name || !this.user.phone) {
+      if (!this.user.name || !this.checkUserPhone(this.user.phone)) {
         this.user.name
           ? (this.nameError = "")
           : (this.nameError = "Campo obrigatório");
         this.user.phone
-          ? (this.phoneError = "")
+          ? (this.phoneError = "Insira um número válido")
           : (this.phoneError = "Campo obrigatório");
         this.$store.commit("setUserFormValid", false);
         return;

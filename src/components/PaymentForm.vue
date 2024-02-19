@@ -52,11 +52,11 @@
           <div v-else>
             <h3>Código Copia e Cola</h3>
             <div class="copy-code">
-              <p>
+              <p ref="code">
                 00020126580014BR.GOV.BCB.PIX01365354d1a3-62a5-4c6b-bf8d-7511acfbdb045204000053039865802BR5925Gideao
                 Levi de Oliveira F6009SAO PAULO62140510Eqy8WV1jgS6304F02B
               </p>
-              <v-btn v-clipboard="pixValue">Copiar código</v-btn>
+              <v-btn @click="copyText()">Copiar código</v-btn>
             </div>
             <v-img src="/qr-code.png" :height="300" alt="QR Code"></v-img>
           </div>
@@ -68,8 +68,10 @@
           <div v-else>
             <h3>Código do Boleto</h3>
             <div>
-              <p>26090.54834 30320.515635 74000.000005 8 96360000002000</p>
-              <v-btn v-clipboard="() => billValue">Copiar código</v-btn>
+              <p ref="code">
+                26090.54834 30320.515635 74000.000005 8 96360000002000
+              </p>
+              <v-btn @click="copyText()">Copiar código</v-btn>
             </div>
             <v-img src="/boleto.png" :height="200" alt="Boleto"></v-img>
           </div>
@@ -102,9 +104,7 @@ export default {
       cpfError: "",
       radioError: "",
       uniqueId: "",
-      pixValue:
-        "00020126580014BR.GOV.BCB.PIX01365354d1a3-62a5-4c6b-bf8d-7511acfbdb045204000053039865802BR5925Gideao Levi de Oliveira F6009SAO PAULO62140510Eqy8WV1jgS6304F02B",
-      billValue: "26090.54834 30320.515635 74000.000005 8 96360000002000",
+      code: "",
     };
   },
   // Watch changes in radio selection
@@ -122,11 +122,20 @@ export default {
       handler() {
         this.fetchPaymentOptions();
       },
-      // immediate: true, // This will call fetchPaymentOptions immediately when the component is created
     },
   },
   methods: {
-    //Gather all payment options in offer
+    // Method to copy pix or bill code
+    copyText() {
+      const element = this.$refs.code;
+      const tempInput = document.createElement("input");
+      tempInput.value = element.textContent;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand("copy");
+      document.body.removeChild(tempInput);
+    },
+    // Gather all payment options in offer
     fetchPaymentOptions() {
       const offer = this.orderCode;
       fetch(`/offers/${offer}`)

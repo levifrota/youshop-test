@@ -1,6 +1,8 @@
 <template>
-  <AppHeader />
-  <MainForm />
+  <div>
+    <AppHeader />
+    <MainForm />
+  </div>
 </template>
 
 <script>
@@ -18,3 +20,5 @@ export default defineComponent({
   },
 });
 </script>
+
+<style></style>

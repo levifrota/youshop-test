@@ -38,7 +38,7 @@ export default {
 
 <style scoped>
 .offer-image {
-  width: 10%;
+  width: 20%;
 }
 .item-info {
   width: 100%;

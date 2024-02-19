@@ -26,7 +26,6 @@ describe("E2E test", () => {
     const goToUser = $("button=Ativar Código");
     goToUser.waitForValue(offerCodeInput.getValue());
     await goToUser.click();
-    browser.debug();
 
     // Check if the offer details are enabled
     const deliverDetails = $("aria/Telefone:");

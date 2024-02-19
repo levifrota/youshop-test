@@ -1448,6 +1448,11 @@
   resolved "https://registry.npmjs.org/@mdi/font/-/font-5.9.55.tgz"
   integrity sha512-jswRF6q3eq8NWpWiqct6q+6Fg/I7nUhrxYJfiEM8JJpap0wVJLQdbKtyS65GdlK7S7Ytnx3TTi/bmw+tBhkGmg==
 
+"@mdi/js@^7.4.47":
+  version "7.4.47"
+  resolved "https://registry.yarnpkg.com/@mdi/js/-/js-7.4.47.tgz#7d8a4edc9631bffeed80d1ec784f9beae559a76a"
+  integrity sha512-KPnNOtm5i2pMabqZxpUz7iQf+mfrYZyKCZ8QNz85czgEt7cuHcGorWfdzUMWYA0SD+a6Hn4FmJ+YhzzzjkTZrQ==
+
 "@mswjs/cookies@^1.1.0":
   version "1.1.0"
   resolved "https://registry.npmjs.org/@mswjs/cookies/-/cookies-1.1.0.tgz"
@@ -3097,7 +3102,7 @@ available-typed-arrays@^1.0.6:
   resolved "https://registry.npmjs.org/available-typed-arrays/-/available-typed-arrays-1.0.6.tgz"
   integrity sha512-j1QzY8iPNPG4o4xmO3ptzpRxTciqD3MgEHtifP/YnJpIo58Xu+ne4BejlbkuaLfXn/nz6HFiw29bLpj2PNMdGg==
 
-axios@^1.6.5, axios@^1.6.7:
+axios@^1.6.5:
   version "1.6.7"
   resolved "https://registry.npmjs.org/axios/-/axios-1.6.7.tgz"
   integrity sha512-/hDJGff6/c7u0hDkvkGxR/oy6CbCs8ziCsC7SqmhjfozqiJGc8Z11wrv9z9lYfY4K8l+H9TpjcMDX0xOZmx+RA==
@@ -10161,13 +10166,6 @@ uuid@^8.3.1, uuid@^8.3.2:
   resolved "https://registry.npmjs.org/uuid/-/uuid-8.3.2.tgz"
   integrity sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==
 
-v-clipboard@^3.0.0-next.1:
-  version "3.0.0-next.1"
-  resolved "https://registry.yarnpkg.com/v-clipboard/-/v-clipboard-3.0.0-next.1.tgz#6e360e54f20cc15cd5bc57b3a71af28bc371b4e5"
-  integrity sha512-UvCnzetQMlVfk9yoiyew8ldGiCzeER5aYdmXXtZp8LC6rt2QXQS0AayEDn1K7rlXpd3M8d+JeYNUV+ZNgtaS4A==
-  dependencies:
-    vue "^3.2.45"
-
 v8-compile-cache@^2.0.3:
   version "2.4.0"
   resolved "https://registry.npmjs.org/v8-compile-cache/-/v8-compile-cache-2.4.0.tgz"
@@ -10263,7 +10261,7 @@ vue-template-es2015-compiler@^1.9.0:
   resolved "https://registry.npmjs.org/vue-template-es2015-compiler/-/vue-template-es2015-compiler-1.9.1.tgz"
   integrity sha512-4gDntzrifFnCEvyoO8PqyJDmguXgVPxKiIxrBKjIowvL9l+N66196+72XVYR8BBf1Uv1Fgt3bGevJ+sEmxfZzw==
 
-vue@^3.2.13, vue@^3.2.45:
+vue@^3.2.13:
   version "3.4.19"
   resolved "https://registry.npmjs.org/vue/-/vue-3.4.19.tgz"
   integrity sha512-W/7Fc9KUkajFU8dBeDluM4sRGc/aa4YJnOYck8dkjgZoXtVsn3OeTGni66FV1l3+nvPA7VBFYtPioaGKUmEADw==

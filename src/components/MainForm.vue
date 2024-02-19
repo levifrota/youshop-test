@@ -1,6 +1,8 @@
 <template>
-  <v-container class="d-flex flex-column align-center">
-    <div class="d-flex align-start justify-space-around offer-input-details">
+  <v-container class="main-container d-flex flex-column align-center">
+    <div
+      class="d-flex mt-7 align-start justify-space-around offer-input-details"
+    >
       <v-card>
         <v-card-title>Insira seu código</v-card-title>
         <v-card-item>
@@ -103,6 +105,9 @@ export default {
 .components-container {
   width: 80%;
 }
+.offer-input-details {
+  width: 60%;
+}
 @media (max-width: 900px) {
   .components-container {
     width: 100%;
@@ -112,6 +117,7 @@ export default {
   .offer-input-details {
     flex-direction: column;
     align-items: center !important;
+    width: 80%;
   }
   .offer-details {
     margin-top: 2rem;
